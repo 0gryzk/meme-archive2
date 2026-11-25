@@ -1,0 +1,104 @@
+{% extends 'memes/base.html' %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Библиотека мемов</h1>
+        <p class="text-secondary mb-0">Найдено записей: <span class="text-light fw-semibold">{{ memes|length }}</span></p>
+    </div>
+    <a href="{% url 'meme_create' %}" class="btn btn-accent px-4 py-2">+ Новый мем</a>
+</div>
+
+<form method="get" class="panel-box p-3 p-md-4 mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-5">
+            <label for="id_q" class="form-label small text-secondary mb-1">Поиск</label>
+            <input
+                type="text"
+                id="id_q"
+                name="q"
+                value="{{ search_query }}"
+                class="form-control"
+                placeholder="Название или описание мема..."
+            >
+        </div>
+
+        <div class="col-md-3">
+            <label for="id_year" class="form-label small text-secondary mb-1">Год</label>
+            <select id="id_year" name="year" class="form-select">
+                <option value="">Все годы</option>
+                {% for y in years %}
+                    <option value="{{ y }}" {% if selected_year == y|stringformat:"s" %}selected{% endif %}>{{ y }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="id_category" class="form-label small text-secondary mb-1">Категория</label>
+            <select id="id_category" name="category" class="form-select">
+                <option value="">Все категории</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-12 d-flex gap-2">
+            <button type="submit" class="btn btn-accent px-4">Найти</button>
+            <a href="{% url 'meme_list' %}" class="btn btn-outline-secondary text-light">Сбросить</a>
+        </div>
+    </div>
+</form>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for meme in memes %}
+    <div class="col">
+        <article class="card meme-card h-100">
+            <div class="meme-media-wrap">
+                {% if meme.image %}
+                    <img src="{{ meme.image.url }}" class="meme-media" alt="{{ meme.title }}">
+                    <span class="media-badge">ФОТО</span>
+                {% elif meme.video %}
+                    <video class="meme-media" muted loop playsinline onmouseover="this.play()" onmouseout="this.pause()">
+                        <source src="{{ meme.video.url }}" type="video/mp4">
+                    </video>
+                    <span class="media-badge">ВИДЕО · НАВЕДИ</span>
+                {% else %}
+                    <div class="d-flex h-100 align-items-center justify-content-center text-secondary small">
+                        Без медиафайла
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="card-body d-flex flex-column p-4">
+                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                    <h5 class="card-title fw-bold mb-0">{{ meme.title }}</h5>
+                    <span class="year-pill">{{ meme.year }}</span>
+                </div>
+
+                {% if meme.category %}
+                    <div class="mb-3">
+                        <span class="category-pill">{{ meme.category.name }}</span>
+                    </div>
+                {% endif %}
+
+                <p class="card-text text-secondary small mb-4">{{ meme.description|truncatewords:20 }}</p>
+
+                <div class="mt-auto d-flex gap-2">
+                    <a href="{% url 'meme_detail' meme.pk %}" class="btn btn-light btn-sm fw-semibold flex-grow-1 py-2">Открыть</a>
+                    <a href="{% url 'meme_update' meme.pk %}" class="btn btn-outline-warning btn-sm px-3 py-2">Изм.</a>
+                    <a href="{% url 'meme_delete' meme.pk %}" class="btn btn-outline-danger btn-sm px-3 py-2">Уд.</a>
+                </div>
+            </div>
+        </article>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="panel-box p-5 text-center">
+            <p class="text-secondary mb-3">По текущим фильтрам мемы не найдены.</p>
+            <a href="{% url 'meme_list' %}" class="btn btn-outline-secondary text-light btn-sm">Показать все мемы</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

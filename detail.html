@@ -1,0 +1,47 @@
+{% extends 'memes/base.html' %}
+
+{% block title %}{{ meme.title }} ({{ meme.year }}){% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <a href="{% url 'meme_list' %}" class="btn btn-outline-secondary text-light">← Назад к списку</a>
+    <div class="d-flex gap-2">
+        <a href="{% url 'meme_update' meme.pk %}" class="btn btn-outline-warning">Редактировать</a>
+        <a href="{% url 'meme_delete' meme.pk %}" class="btn btn-outline-danger">Удалить</a>
+    </div>
+</div>
+
+<div class="row g-4 align-items-start">
+    <div class="col-lg-6">
+        <div class="panel-box p-3">
+            {% if meme.image %}
+                <img src="{{ meme.image.url }}" class="img-fluid rounded-3 w-100" alt="{{ meme.title }}">
+            {% elif meme.video %}
+                <video class="w-100 rounded-3" controls autoplay>
+                    <source src="{{ meme.video.url }}" type="video/mp4">
+                </video>
+            {% else %}
+                <div class="py-5 text-center text-secondary">Медиафайл не загружен</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="panel-box p-4 p-md-5">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="year-pill">Год: {{ meme.year }}</span>
+                {% if meme.category %}
+                    <span class="category-pill">{{ meme.category.name }}</span>
+                {% endif %}
+            </div>
+
+            <h1 class="fw-bold display-6 mb-4">{{ meme.title }}</h1>
+
+            <div class="text-uppercase small fw-semibold text-secondary mb-2" style="letter-spacing: 0.08em;">
+                Описание и контекст
+            </div>
+            <p class="fs-6 text-light lh-lg mb-0" style="white-space: pre-line;">{{ meme.description }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

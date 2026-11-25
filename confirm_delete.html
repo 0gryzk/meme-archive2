@@ -1,0 +1,22 @@
+{% extends 'memes/base.html' %}
+
+{% block title %}Удалить {{ meme.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="panel-box p-4 p-md-5" style="border-color: rgba(239, 68, 68, 0.35);">
+            <h1 class="h4 fw-bold text-danger mb-3">Удалить мем?</h1>
+            <p class="text-secondary mb-4">
+                Запись <strong class="text-light">«{{ meme.title }}» ({{ meme.year }})</strong> будет удалена без возможности восстановления.
+            </p>
+
+            <form method="post" class="d-flex gap-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger px-4">Да, удалить</button>
+                <a href="{% url 'meme_detail' meme.pk %}" class="btn btn-outline-secondary text-light">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
